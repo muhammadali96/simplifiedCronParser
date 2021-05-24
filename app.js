@@ -1,15 +1,4 @@
 
-//Assumptions
-//input is string
-//minute field: 60 values ranging from 0-59
-//hour field: 24 values ranging from 0-23
-//followed by /bin/run_me_{descriptor}
-//Output is same type and format
-//specify day
-//Output is soonest time event occurs
-
-
-
 
 const fs = require("fs");
 let data = fs.readFileSync(process.stdin.fd, "utf-8");
@@ -18,13 +7,11 @@ data = data.split("\n")
 let currentTime = process.argv[2]
 let output = data.map((configLine) => {
     return cronParse(configLine, currentTime)
-
-
 })
 console.log(output.join("\n"))
 
 function computeCurrentTime(currentTime) {
-    //given currentTime string, compute currentMinute and currentHour as numbers
+    //Given currentTime string, compute currentMinute and currentHour as numbers
     let currentTimeArray = currentTime.split(':')
     let currentHour = parseInt(currentTimeArray[0])
     let currentMinute = parseInt(currentTimeArray[1])
@@ -37,6 +24,10 @@ function formatMinute(minute) {
         minute = `0${minute}`;
     }
     return minute;
+}
+
+function returnString(soonestTime, day, descriptor) {
+    return `${soonestTime} ${day} - ${descriptor}`
 }
 
 
@@ -61,7 +52,7 @@ function runMeDaily(cronMinute, cronHour, descriptor, currentTime) {
     }
     soonestTime = `${cronHour}:${cronMinute}`
 
-    return `${soonestTime} ${day} - ${descriptor}`
+    return returnString(soonestTime, day, descriptor)
 }
 
 // //TESTS
@@ -93,7 +84,7 @@ function runMeHourly(cronMinute, descriptor, currentTime) {
         soonestTime = `${currentHour + 1}:${cronMinute}`
     }
 
-    return `${soonestTime} ${day} - ${descriptor}`
+    return returnString(soonestTime, day, descriptor)
 }
 
 //TESTS
@@ -121,7 +112,7 @@ function runMeSixtyTimes(cronHour, descriptor, currentTime) {
         soonestTime = `${cronHour}:00`
 
     }
-    return `${soonestTime} ${day} - ${descriptor}` //extract as function
+    return returnString(soonestTime, day, descriptor)
 }
 
 
@@ -142,17 +133,14 @@ function cronParse(configLine, currentTime) {
 
 
     if (cronMinuteString === '*' && cronHourString === '*') {
-        console.log('runMeEveryMinute')
         return runMeEveryMinute(descriptor, currentTime)
     }
 
     else if (cronMinuteString === '*') {
-        console.log('runMeSixtyTimes')
         let cronHour = parseInt(cronHourString)
         return runMeSixtyTimes(cronHour, descriptor, currentTime)
     }
     else if (cronHourString === '*') {
-        console.log('runMeHourly')
         let cronMinute = parseInt(cronMinuteString)
         return runMeHourly(cronMinute, descriptor, currentTime)
     }
@@ -171,6 +159,3 @@ function cronParse(configLine, currentTime) {
 // console.log(cronParse('* * /bin/run_me_every_minute', '16:10') === '16:10 today - /bin/run_me_every_minute')
 // console.log(cronParse('* 19 /bin/run_me_sixty_times', '16:10') === '19:00 today - /bin/run_me_sixty_times')
 
-
-//For every line in cat input.txt define configLine and run cronParse
-//currentTime does not change
