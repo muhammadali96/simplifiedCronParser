@@ -1,0 +1,15 @@
+{
+  "name": "cronparser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "prompts": "^2.4.1",
+    "readline-sync": "^1.4.10"
+  }
+}
